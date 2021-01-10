@@ -3,6 +3,7 @@ package controllers;
 import helper.FileHelper;
 import models.ScoreItem;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ScoreBoardController {
@@ -17,48 +18,39 @@ public class ScoreBoardController {
         return fileHelper.getScores();
     }
 
-    public boolean addScore(String username, int secureRandom, int score){
-        ScoreItem item = checkUsername(new ScoreItem(username, secureRandom, score));
-
-        if(item != null){
-            fileHelper.saveData();
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean checkNewUsername(String username, int secureRandom){
-        ArrayList<ScoreItem> scores = fileHelper.getScores();
-        for(ScoreItem score: scores){
-            if(score.getUsername().equalsIgnoreCase(username)){
-                if(score.getSecureRandom() == secureRandom){
-                    // ok
-                    return true;
-                } else {
-                    // if exists
-                    return false;
-                }
+    public boolean addScore(ScoreItem newItem){
+        ArrayList<ScoreItem> items = fileHelper.getScores();
+        ScoreItem previousRecord = null;
+        for(ScoreItem item: items){
+            if(item.getUsername().equalsIgnoreCase(newItem.getUsername())){
+                previousRecord = item;
+                break;
             }
         }
-        // ok
+
+        if(previousRecord == null){
+            items.add(newItem);
+        } else {
+            previousRecord.setScore(newItem.getScore());
+        }
+        fileHelper.saveData();
+
         return true;
     }
 
-    private ScoreItem checkUsername(ScoreItem newScore){
-        ArrayList<ScoreItem> scores = fileHelper.getScores();
-        for(ScoreItem score: scores){
-            if(score.getUsername().equalsIgnoreCase(newScore.getUsername())){
-                if(score.getSecureRandom() == newScore.getSecureRandom()){
-                    return score;
-                } else {
-                    return null;
-                }
+    public boolean changeUsername(String username){
+        ArrayList<ScoreItem> items = fileHelper.getScores();
+        for (ScoreItem item: items){
+            if(item.getUsername().equalsIgnoreCase(username)){
+                // same username
+                return false;
             }
         }
-        // add new item to list
-        scores.add(newScore);
-        // return new item
-        return newScore;
+
+        ScoreItem newItem = new ScoreItem(username,0);
+        items.add(newItem);
+        fileHelper.saveData();
+
+        return true;
     }
 }

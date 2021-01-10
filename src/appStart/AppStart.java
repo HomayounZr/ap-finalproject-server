@@ -1,3 +1,5 @@
+package appStart;
+
 import controllers.ScoreBoardController;
 import helper.ThreadServer;
 
