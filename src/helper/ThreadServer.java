@@ -1,11 +1,9 @@
 package helper;
 
 import appStart.AppStart;
-import models.RestMessage;
-import models.ScoreItem;
+import models.BoardItem;
+import models.servermodels.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -29,31 +27,31 @@ public class ThreadServer implements Runnable {
             RestMessage request = (RestMessage) inputStream.readObject();
             if(request.getRoute().equalsIgnoreCase("getAll")){
 
-                ArrayList<ScoreItem> items = AppStart.scoreBoardController.getScores();
-                outputStream.writeObject(new RestMessage("CLIENT",items));
+                ArrayList<BoardItem> items = AppStart.scoreBoardController.getScores();
+                outputStream.writeObject(new RestMessage("CLIENT",new BoardItemsMessage(items)));
 
             } else if(request.getRoute().equalsIgnoreCase("newRecord")){
 
-                ScoreItem newItem = (ScoreItem) request.getBody();
-                boolean result = AppStart.scoreBoardController.addScore(newItem);
+                NewBoardItemMessage newItem = (NewBoardItemMessage) request.getBody();
+                boolean result = AppStart.scoreBoardController.addScore(newItem.getItem());
                 String response = "OK";
                 if(!result)
                     response = "USERNAME";
 
-                outputStream.writeObject(new RestMessage("CLIENT",response));
+                outputStream.writeObject(new RestMessage("CLIENT",new StringMessage(response)));
 
             } else if(request.getRoute().equalsIgnoreCase("changeUsername")){
 
-                String newUsername = (String) request.getBody();
-                boolean result = AppStart.scoreBoardController.changeUsername(newUsername);
+                ChangeUsernameMessage usernames = (ChangeUsernameMessage)request.getBody();
+                boolean result = AppStart.scoreBoardController.changeUsername(usernames.getPrevUsername(),usernames.getNewUsername());
                 String response = "OK";
                 if(!result)
-                    response = "USERNAME";
+                    response = "EXISTS";
 
-                outputStream.writeObject(new RestMessage("CLIENT",response));
+                outputStream.writeObject(new RestMessage("CLIENT",new StringMessage(response)));
 
             } else {
-                outputStream.writeObject(new RestMessage("CLIENT","NOT FOUND"));
+                outputStream.writeObject(new RestMessage("CLIENT",new StringMessage("NOT FOUND")));
             }
 
             outputStream.flush();

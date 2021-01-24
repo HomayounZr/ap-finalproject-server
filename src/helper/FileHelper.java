@@ -1,24 +1,27 @@
 package helper;
 
+import models.BoardItem;
 import models.ScoreItem;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class FileHelper {
 
     private String fileName;
     private File file;
-    private ArrayList<ScoreItem> scores;
+    private ArrayList<BoardItem> items;
 
     public FileHelper(String fileName){
         this.fileName = fileName;
-        scores = new ArrayList<>();
+        items = new ArrayList<>();
         file = new File("./data/" + fileName + ".txt");
         if(!file.exists()){
             // creating the file if doesn't exists
             try{
-                file.createNewFile();
+                Files.createFile(Paths.get("./data/" + fileName + ".txt"));
             } catch (IOException ex){
                 ex.printStackTrace();
             }
@@ -32,8 +35,8 @@ public class FileHelper {
         try(ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))){
 
             while(true){
-                ScoreItem scoreItem = (ScoreItem) inputStream.readObject();
-                scores.add(scoreItem);
+                BoardItem item = (BoardItem) inputStream.readObject();
+                items.add(item);
             }
 
         } catch (EOFException ex){
@@ -43,8 +46,12 @@ public class FileHelper {
         }
     }
 
-    public ArrayList<ScoreItem> getScores(){
-        return scores;
+    public ArrayList<BoardItem> getScores(){
+        return items;
+    }
+
+    public void addNewItem(BoardItem newItem){
+        items.add(newItem);
     }
 
     public void saveData(){
@@ -53,8 +60,8 @@ public class FileHelper {
 
         try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))){
 
-            for(ScoreItem score: scores){
-                outputStream.writeObject(score);
+            for(BoardItem item: items){
+                outputStream.writeObject(item);
             }
 
             outputStream.flush();

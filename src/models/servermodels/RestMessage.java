@@ -1,13 +1,15 @@
-package models;
+package models.servermodels;
+
+import models.servermodels.RestMessageBody;
 
 import java.io.Serializable;
 
 public class RestMessage implements Serializable {
 
     private String route;
-    private Object body;
+    private RestMessageBody body;
 
-    public RestMessage(String route, Object body){
+    public RestMessage(String route, RestMessageBody body){
         this.route = route;
         this.body = body;
     }
@@ -16,7 +18,7 @@ public class RestMessage implements Serializable {
         return route;
     }
 
-    public Object getBody() {
+    public RestMessageBody getBody() {
         return body;
     }
 

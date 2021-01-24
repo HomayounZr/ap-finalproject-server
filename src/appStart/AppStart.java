@@ -21,7 +21,7 @@ public class AppStart {
 
             while(true){
                 Socket newSocket = serverSocket.accept();
-
+                System.out.println("New Client Connected");
                 Thread threadServer = new Thread(new ThreadServer(newSocket));
                 executorService.execute(threadServer);
             }

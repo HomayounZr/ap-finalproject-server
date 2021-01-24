@@ -1,6 +1,7 @@
 package controllers;
 
 import helper.FileHelper;
+import models.BoardItem;
 import models.ScoreItem;
 
 import java.lang.reflect.Array;
@@ -14,43 +15,51 @@ public class ScoreBoardController {
         this.fileHelper = new FileHelper("scoreboard");
     }
 
-    public ArrayList<ScoreItem> getScores(){
+    public ArrayList<BoardItem> getScores(){
         return fileHelper.getScores();
     }
 
-    public boolean addScore(ScoreItem newItem){
-        ArrayList<ScoreItem> items = fileHelper.getScores();
-        ScoreItem previousRecord = null;
-        for(ScoreItem item: items){
-            if(item.getUsername().equalsIgnoreCase(newItem.getUsername())){
-                previousRecord = item;
-                break;
-            }
-        }
+    public boolean addScore(BoardItem newItem){
+        BoardItem alreadyExists = findUser(newItem.getUsername());
 
-        if(previousRecord == null){
-            items.add(newItem);
-        } else {
-            previousRecord.setScore(newItem.getScore());
-        }
+        if(alreadyExists != null)
+            getScores().remove(alreadyExists);
+
+        getScores().add(newItem);
         fileHelper.saveData();
 
         return true;
     }
 
-    public boolean changeUsername(String username){
-        ArrayList<ScoreItem> items = fileHelper.getScores();
-        for (ScoreItem item: items){
-            if(item.getUsername().equalsIgnoreCase(username)){
-                // same username
-                return false;
-            }
+    public boolean changeUsername(String prevUsername,String newUsername){
+        if(prevUsername.equalsIgnoreCase(newUsername))
+            return true;
+
+        BoardItem sameUsernameItem = findUser(newUsername);
+        if(sameUsernameItem != null)
+            return false;
+
+        BoardItem userItem;
+        if(!prevUsername.equals("")){
+            userItem = findUser(prevUsername);
+            userItem.setUsername(newUsername);
+        } else {
+            userItem = new BoardItem(newUsername,0,0,0,0,0);
+            fileHelper.addNewItem(userItem);
         }
 
-        ScoreItem newItem = new ScoreItem(username,0);
-        items.add(newItem);
         fileHelper.saveData();
 
         return true;
+    }
+
+    public BoardItem findUser(String username){
+        ArrayList<BoardItem> items = fileHelper.getScores();
+        for(BoardItem item: items){
+            if(item.getUsername().equalsIgnoreCase(username)){
+                return item;
+            }
+        }
+        return null;
     }
 }
