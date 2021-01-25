@@ -36,6 +36,7 @@ public class FileHelper {
 
             while(true){
                 BoardItem item = (BoardItem) inputStream.readObject();
+//                System.out.println(item.getUsername());
                 items.add(item);
             }
 
@@ -47,6 +48,9 @@ public class FileHelper {
     }
 
     public ArrayList<BoardItem> getScores(){
+//        for(BoardItem item: items){
+//            System.out.println(item.getUsername());
+//        }
         return items;
     }
 

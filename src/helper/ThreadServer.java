@@ -25,6 +25,10 @@ public class ThreadServer implements Runnable {
                 ){
 
             RestMessage request = (RestMessage) inputStream.readObject();
+            System.out.println(request.getRoute());
+//            Object object = inputStream.readObject();
+//            System.out.println(object);
+//            RestMessage request = (RestMessage) object;
             if(request.getRoute().equalsIgnoreCase("getAll")){
 
                 ArrayList<BoardItem> items = AppStart.scoreBoardController.getScores();
