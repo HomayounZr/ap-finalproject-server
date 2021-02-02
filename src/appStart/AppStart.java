@@ -1,5 +1,6 @@
 package appStart;
 
+import controllers.SavesController;
 import controllers.ScoreBoardController;
 import helper.ThreadServer;
 
@@ -11,9 +12,11 @@ import java.util.concurrent.Executors;
 public class AppStart {
 
     public static ScoreBoardController scoreBoardController;
+    public static SavesController savesController;
 
     public static void runServer(){
         scoreBoardController = new ScoreBoardController();
+        savesController = new SavesController();
 
         ExecutorService executorService = Executors.newCachedThreadPool();
         try{

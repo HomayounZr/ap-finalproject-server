@@ -1,5 +1,6 @@
 package controllers;
 
+import appStart.AppStart;
 import helper.FileHelper;
 import models.BoardItem;
 import models.ScoreItem;
@@ -46,6 +47,7 @@ public class ScoreBoardController {
         } else {
             userItem = new BoardItem(newUsername,0,0,0,0,0);
             fileHelper.addNewItem(userItem);
+            AppStart.savesController.createFileForUser(newUsername);
         }
 
         fileHelper.saveData();

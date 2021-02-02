@@ -3,9 +3,9 @@ package helper;
 import appStart.AppStart;
 import models.BoardItem;
 import models.servermodels.*;
+import org.json.simple.JSONArray;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -53,6 +53,54 @@ public class ThreadServer implements Runnable {
                     response = "EXISTS";
 
                 outputStream.writeObject(new RestMessage("CLIENT",new StringMessage(response)));
+
+            } else if(request.getRoute().equalsIgnoreCase("newSave")){
+
+                String username = ((StringMessage)request.getBody()).getContent();
+
+//                DataInputStream dataInputStream = new DataInputStream(inputStream);
+//                byte[] buffer = new byte[50000];
+//                int bytes = dataInputStream.read(buffer,0,buffer.length);
+//                AppStart.savesController.saveNewFile(username,buffer,bytes);
+
+                byte[] buffer = new byte[4096];
+                BufferedInputStream in = new BufferedInputStream(new DataInputStream(inputStream));
+                if(in == null)
+                    System.out.println("NULLL");
+                File file = new File("./data/saves/" + username + ".txt");
+                if(file.exists()){
+                    file.delete();
+                }
+                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+//                System.out.println("hellooooo");
+                while(in.available() > 0){
+                    System.out.println("reading...");
+                    int count = in.read(buffer);
+                    out.write(buffer,0,count);
+                }
+                out.flush();
+
+//                System.out.println("saved...");
+
+                out.close();
+                in.close();
+
+            } else if(request.getRoute().equalsIgnoreCase("getSaves")){
+
+                String username = ((StringMessage) request.getBody()).getContent();
+//                byte[] buffer = new byte[50000];
+//                int bytes = saveInputStream.read(buffer,0,buffer.length);
+//                DataOutputStream newOutputStream = new DataOutputStream(outputStream);
+//                newOutputStream.write(buffer,0,bytes);
+
+                byte[] buffer = new byte[4096];
+                BufferedInputStream in = new BufferedInputStream(AppStart.savesController.getUserSaves(username));
+                BufferedOutputStream out = new BufferedOutputStream(outputStream);
+                while(in.available() > 0){
+                    int count = in.read(buffer);
+                    out.write(buffer,0,count);
+                }
+                out.flush();
 
             } else {
                 outputStream.writeObject(new RestMessage("CLIENT",new StringMessage("NOT FOUND")));
