@@ -65,8 +65,6 @@ public class ThreadServer implements Runnable {
 
                 byte[] buffer = new byte[4096];
                 BufferedInputStream in = new BufferedInputStream(new DataInputStream(inputStream));
-                if(in == null)
-                    System.out.println("NULLL");
                 File file = new File("./data/saves/" + username + ".txt");
                 if(file.exists()){
                     file.delete();
@@ -88,19 +86,30 @@ public class ThreadServer implements Runnable {
             } else if(request.getRoute().equalsIgnoreCase("getSaves")){
 
                 String username = ((StringMessage) request.getBody()).getContent();
-//                byte[] buffer = new byte[50000];
-//                int bytes = saveInputStream.read(buffer,0,buffer.length);
-//                DataOutputStream newOutputStream = new DataOutputStream(outputStream);
-//                newOutputStream.write(buffer,0,bytes);
+//                byte[] buffer = new byte[4096];
+//                BufferedInputStream in = new BufferedInputStream(AppStart.savesController.getUserSaves(username));
+//                BufferedOutputStream out = new BufferedOutputStream(new DataOutputStream(socket.getOutputStream()));
+//                while(in.available() > 0){
+//                    int count = in.read(buffer);
+//                    out.write(buffer,0,count);
+//                    System.out.println("chunk " + count);
+//                }
+//                out.flush();
+                File file = new File("./data/saves/" + username + ".txt");
 
+                DataInputStream in = new DataInputStream(new FileInputStream(file));
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+
+                out.writeLong(file.length());
+                int bytes = 0;
                 byte[] buffer = new byte[4096];
-                BufferedInputStream in = new BufferedInputStream(AppStart.savesController.getUserSaves(username));
-                BufferedOutputStream out = new BufferedOutputStream(outputStream);
-                while(in.available() > 0){
-                    int count = in.read(buffer);
-                    out.write(buffer,0,count);
+//                System.out.println("Checkpoint");
+                while((bytes = in.read(buffer)) != -1){
+                    System.out.println("chunk" + bytes);
+                    out.write(buffer,0,bytes);
+                    out.flush();
                 }
-                out.flush();
+                in.close();
 
             } else {
                 outputStream.writeObject(new RestMessage("CLIENT",new StringMessage("NOT FOUND")));
@@ -110,6 +119,12 @@ public class ThreadServer implements Runnable {
 
         } catch (Exception ex){
             ex.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (Exception ex){
+
+            }
         }
     }
 }
