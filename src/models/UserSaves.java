@@ -3,6 +3,10 @@ package models;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+/**
+ * for saving save as json file
+ * ** NOT WORKING*
+ */
 public class UserSaves {
 
     private String username;

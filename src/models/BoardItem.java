@@ -2,6 +2,9 @@ package models;
 
 import java.io.Serializable;
 
+/**
+ * each item in rankings bord
+ */
 public class BoardItem implements Serializable {
 
     private String username;
@@ -11,6 +14,15 @@ public class BoardItem implements Serializable {
     private int loses_hard;
     private int totalScore;
 
+    /**
+     * constructor
+     * @param username String
+     * @param wins_easy int
+     * @param wins_hard int
+     * @param loses_easy int
+     * @param loses_hard int
+     * @param totalScore int
+     */
     public BoardItem(
             String username,
             int wins_easy, int wins_hard,

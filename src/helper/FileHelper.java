@@ -8,12 +8,21 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/**
+ * File Helper for operations on scoreboards file
+ */
 public class FileHelper {
 
     private String fileName;
     private File file;
     private ArrayList<BoardItem> items;
 
+    /**
+     * constructor,
+     * create file if doesn't exist
+     * and load previous data
+     * @param fileName String
+     */
     public FileHelper(String fileName){
         this.fileName = fileName;
         items = new ArrayList<>();
@@ -31,6 +40,7 @@ public class FileHelper {
         }
     }
 
+    // load previous data
     private void loadData(){
         try(ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))){
 
@@ -47,6 +57,10 @@ public class FileHelper {
         }
     }
 
+    /**
+     * get all items
+     * @return ArrayList BoardItem
+     */
     public ArrayList<BoardItem> getScores(){
 //        for(BoardItem item: items){
 //            System.out.println(item.getUsername());
@@ -54,10 +68,17 @@ public class FileHelper {
         return items;
     }
 
+    /**
+     * add a new game result
+     * @param newItem BoardItem
+     */
     public void addNewItem(BoardItem newItem){
         items.add(newItem);
     }
 
+    /**
+     * write changes on file
+     */
     public void saveData(){
         if(file.exists())
             file.delete();

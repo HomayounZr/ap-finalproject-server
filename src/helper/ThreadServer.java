@@ -9,10 +9,17 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * for handling different type of request client might send
+ */
 public class ThreadServer implements Runnable {
 
     private Socket socket;
 
+    /**
+     * constructor
+     * @param socket Socket
+     */
     public ThreadServer(Socket socket){
         this.socket = socket;
     }

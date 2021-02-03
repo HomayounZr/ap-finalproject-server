@@ -3,6 +3,10 @@ package models;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Score Item
+ * ** USELESS **
+ */
 public class ScoreItem implements Serializable {
 
     private String username;
